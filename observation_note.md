@@ -54,3 +54,11 @@ This helped me understand how Git records the development history of a project.
 ### Current Reflection
 
 I am starting to understand how version control supports software development. GitHub is not only a place to upload the final project; it can show the progress of the application over time through meaningful commits.
+
+---
+
+## 1st October 2026
+
+Restructure the project
+Learned about button logic and difference between remember and viewModel()
+Change the app launch icon
