@@ -63,4 +63,5 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
     implementation("com.squareup.retrofit2:converter-scalars:3.0.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")//to download and display images in Compose
 }

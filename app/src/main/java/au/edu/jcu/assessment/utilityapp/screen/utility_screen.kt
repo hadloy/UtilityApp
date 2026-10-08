@@ -1,7 +1,6 @@
 
 package au.edu.jcu.assessment.utilityapp.screen
 
-import android.R.attr.name
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import au.edu.jcu.assessment.utilityapp.model.UserProfile
+//For images download and display
+import coil.compose.AsyncImage //load images
+import androidx.compose.foundation.layout.size // set image dimension
+import androidx.compose.foundation.shape.CircleShape //define shape
+import androidx.compose.ui.draw.clip //crop image
+import androidx.compose.ui.Alignment //position in layout
+import androidx.compose.ui.layout.ContentScale //how to resize an image
+
 
 @Composable
 fun UtilityScreen() {
@@ -49,14 +56,27 @@ fun UtilityScreen() {
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
                 Text(
                     text = "Sample User Profile",
                     style = MaterialTheme.typography.titleMedium
                 )
+                //display user picture
+                AsyncImage(
+                    model = sampleUser.pictureUrl,
+                    contentDescription = "User profile picture",
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+
+                //display user data
                 Text(text = "Name: ${sampleUser.name}") //calling user data from UserProfile class
                 Text(text = "Email: ${sampleUser.email}")
                 Text(text = "Phone: ${sampleUser.phone}")
