@@ -60,5 +60,11 @@ I am starting to understand how version control supports software development. G
 ## 1st October 2026
 
 Restructure the project
-Learned about button logic and difference between remember and viewModel()
+Learned about button logic and the difference between remember and viewModel()
 Change the app launch icon
+
+---
+## 8 October 2026
+
+Define the app concept, name and validate the icon design.
+I also imported all my colour schemes, but I still need to define how I want to use my theme.

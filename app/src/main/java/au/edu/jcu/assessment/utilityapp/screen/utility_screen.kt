@@ -29,7 +29,7 @@ fun UtilityScreen() {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Utility Screen", style = MaterialTheme.typography.headlineMedium)
+        Text("QA Test Data User Generator", style = MaterialTheme.typography.headlineMedium)
         Text("Counter: $counter", style = MaterialTheme.typography.bodyLarge)
         Button(onClick = { counter++ }) {
             Text("Increment")
