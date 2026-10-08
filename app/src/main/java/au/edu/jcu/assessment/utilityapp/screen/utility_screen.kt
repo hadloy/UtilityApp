@@ -76,12 +76,14 @@ fun UtilityScreen(
                 )
 
                 //display user data
+                Text(text = "Gender: ${sampleUser.gender}")
                 Text(text = "Name: ${sampleUser.name}") //calling user data from UserProfile class
                 Text(text = "Email: ${sampleUser.email}")
                 Text(text = "Phone: ${sampleUser.phone}")
                 Text(text = "Nationality: ${sampleUser.nationality}")
                 Text(text = "Address: ${sampleUser.address}")
                 Text(text = "Birthday: ${sampleUser.birthday}")
+                Text(text = "Username: ${sampleUser.username}")
                 Text(text = "Password: ${sampleUser.password}")
 
             }
