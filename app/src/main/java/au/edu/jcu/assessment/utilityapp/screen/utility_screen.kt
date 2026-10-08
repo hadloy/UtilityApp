@@ -13,28 +13,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import au.edu.jcu.assessment.utilityapp.model.UserProfile
-//For images download and display
 import coil.compose.AsyncImage //load images
 import androidx.compose.foundation.layout.size // set image dimension
 import androidx.compose.foundation.shape.CircleShape //define shape
 import androidx.compose.ui.draw.clip //crop image
 import androidx.compose.ui.Alignment //position in layout
 import androidx.compose.ui.layout.ContentScale //how to resize an image
+import androidx.compose.material3.Button
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
 
 
 @Composable
-fun UtilityScreen() {
-    //sample data to see if the layout works with the new class
-    val sampleUser = UserProfile(
-        name =  "Sophie Taylor",
-        email = "alex.martin@example.com",
-        phone = "0400 000 000",
-        nationality = "AU",
-        pictureUrl = "https://randomuser.me/api/portraits/men/75.jpg",
-        address = "25 King Street, Brisbane, Australia",
-        birthday = "1995-04-12",
-        password = "Example123!"
-    )
+fun UtilityScreen(
+    userViewModel: UserProfileViewModel = viewModel() //pass the view model
+) {
+    val sampleUser by userViewModel.user.collectAsStateWithLifecycle()//collect user data from view model
 
     Column(
         modifier = Modifier
@@ -86,6 +85,14 @@ fun UtilityScreen() {
                 Text(text = "Password: ${sampleUser.password}")
 
             }
+        }
+        Button(
+            onClick = {
+                userViewModel.generateUser()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Generate User")
         }
     }
 }
