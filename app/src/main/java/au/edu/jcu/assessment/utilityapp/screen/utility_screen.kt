@@ -89,9 +89,7 @@ fun UtilityScreen(
             }
         }
         Button(
-            onClick = {
-                userViewModel.generateUser()
-            },
+            onClick = { userViewModel.fetchRandomUser() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Generate User")

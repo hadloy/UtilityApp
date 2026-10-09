@@ -2,6 +2,7 @@ package au.edu.jcu.assessment.utilityapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import au.edu.jcu.assessment.utilityapp.api.RandomUserRetrofitInstance
 import au.edu.jcu.assessment.utilityapp.api.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

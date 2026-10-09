@@ -1,10 +1,13 @@
-
 package au.edu.jcu.assessment.utilityapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import au.edu.jcu.assessment.utilityapp.model.UserProfile
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import android.util.Log
+import androidx.lifecycle.viewModelScope
+import au.edu.jcu.assessment.utilityapp.api.RandomUserRetrofitInstance
+import kotlinx.coroutines.launch
 
 class UserProfileViewModel : ViewModel() {
 
@@ -38,5 +41,32 @@ class UserProfileViewModel : ViewModel() {
             username = "lucasbernard",
             password = "TestPassword456!"
         )
+    }
+    fun fetchRandomUser() {
+        viewModelScope.launch {
+            try {
+                val response = RandomUserRetrofitInstance.api.getRandomUsers()
+                val apiUser = response.results.first()
+
+                _user.value = UserProfile(
+                    name = "${apiUser.name.first} ${apiUser.name.last}",
+                    gender = apiUser.gender,
+                    email = apiUser.email,
+                    phone = apiUser.phone,
+                    nationality = apiUser.nat,
+                    address = "${apiUser.location.street.number} ${apiUser.location.street.name}, ${apiUser.location.city}, ${apiUser.location.country}",
+                    birthday = apiUser.dob.date.substringBefore("T"),
+                    username = apiUser.login.username,
+                    password = apiUser.login.password,
+                    pictureUrl = apiUser.picture.large
+                )
+
+                Log.d("RandomUserAPI", "Name: ${apiUser.name.first}")
+                Log.d("RandomUserAPI", "Email: ${apiUser.email}")
+
+            } catch (e: Exception) {
+                Log.e("RandomUserAPI", "Error fetching user", e)
+            }
+        }
     }
 }
