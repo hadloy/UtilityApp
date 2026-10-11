@@ -34,7 +34,7 @@ fun UtilityScreen(
     userViewModel: UserProfileViewModel = viewModel() //pass the view model
 ) {
     val sampleUser by userViewModel.user.collectAsStateWithLifecycle()//collect user data from view model
-
+    val visibleFields by userViewModel.visibleFields.collectAsStateWithLifecycle()//verify which field is visible
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,27 +65,45 @@ fun UtilityScreen(
                     text = "Sample User Profile",
                     style = MaterialTheme.typography.titleMedium
                 )
-                //display user picture
-                AsyncImage(
-                    model = sampleUser.pictureUrl,
-                    contentDescription = "User profile picture",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-
-                //display user data
-                Text(text = "Gender: ${sampleUser.gender}")
-                Text(text = "Name: ${sampleUser.name}") //calling user data from UserProfile class
-                Text(text = "Email: ${sampleUser.email}")
-                Text(text = "Phone: ${sampleUser.phone}")
-                Text(text = "Nationality: ${sampleUser.nationality}")
-                Text(text = "Address: ${sampleUser.address}")
-                Text(text = "Birthday: ${sampleUser.birthday}")
-                Text(text = "Username: ${sampleUser.username}")
-                Text(text = "Password: ${sampleUser.password}")
-
+                //display user picture if in visible fields
+                if ("picture" in visibleFields) {
+                    AsyncImage(
+                        model = sampleUser.pictureUrl,
+                        contentDescription = "User profile picture",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                //display user data if in visible fields
+                if ("gender" in visibleFields) {
+                    Text(text = "Gender: ${sampleUser.gender}")
+                }
+                if ("name" in visibleFields) {
+                    Text(text = "Name: ${sampleUser.name}")
+                }
+                if ("email" in visibleFields) {
+                    Text(text = "Email: ${sampleUser.email}")
+                }
+                if ("phone" in visibleFields) {
+                    Text(text = "Phone: ${sampleUser.phone}")
+                }
+                if ("nationality" in visibleFields) {
+                    Text(text = "Nationality: ${sampleUser.nationality}")
+                }
+                if ("address" in visibleFields) {
+                    Text(text = "Address: ${sampleUser.address}")
+                }
+                if ("birthday" in visibleFields) {
+                    Text(text = "Birthday: ${sampleUser.birthday}")
+                }
+                if ("username" in visibleFields) {
+                    Text(text = "Username: ${sampleUser.username}")
+                }
+                if ("password" in visibleFields) {
+                    Text(text = "Password: ${sampleUser.password}")
+                }
             }
         }
         Button(

@@ -24,6 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
+import androidx.compose.material3.Checkbox
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun SettingsScreen(
@@ -46,7 +51,6 @@ fun SettingsScreen(
         "Mexico" to "mx",
         "United States" to "us",
         "United Kingdom" to "gb",
-
     )
 
     // Find the label for the selected nationality
@@ -54,13 +58,32 @@ fun SettingsScreen(
         .firstOrNull { it.second == selectedNationality }
         ?.first ?: "Random"
 
+
+    //Observe the visible fields in the ViewModel
+    val visibleFields by userViewModel
+        .visibleFields
+        .collectAsStateWithLifecycle()
+
+    val profileFields = listOf(
+        "picture" to "Profile picture",
+        "name" to "Name",
+        "gender" to "Gender",
+        "email" to "Email",
+        "phone" to "Phone",
+        "nationality" to "Nationality",
+        "address" to "Address",
+        "birthday" to "Date of birth",
+        "username" to "Username",
+        "password" to "Password"
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
+    Text(
             text = "Settings",
             style = MaterialTheme.typography.headlineMedium
         )
@@ -112,6 +135,33 @@ fun SettingsScreen(
                         }
                     )
                 }
+            }
+        }
+        Text(
+            text = "Visible profile fields",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Text(
+            text = "Choose which information to display.",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        profileFields.forEach { (field, label) ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = field in visibleFields,
+                    onCheckedChange = { isChecked ->
+                        userViewModel.updateFieldVisibility(
+                            field,
+                            isChecked
+                        )
+                    }
+                )
+
+                Text(text = label)
             }
         }
     }

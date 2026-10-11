@@ -80,4 +80,31 @@ class UserProfileViewModel : ViewModel() {
         _selectedNationality.value = nationality
     }
 
+    private val _visibleFields = MutableStateFlow(
+        setOf(
+            "picture",
+            "name",
+            "gender",
+            "email",
+            "phone",
+            "nationality",
+            "address",
+            "birthday",
+            "username",
+            "password"
+        )
+    )
+
+    val visibleFields: StateFlow<Set<String>> = _visibleFields
+
+    fun updateFieldVisibility(
+        field: String,
+        isVisible: Boolean
+    ) {
+        _visibleFields.value = if (isVisible) {
+            _visibleFields.value + field
+        } else {
+            _visibleFields.value - field
+        }
+    }
 }
