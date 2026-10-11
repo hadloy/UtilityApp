@@ -25,7 +25,6 @@ class UserProfileViewModel : ViewModel() {
             password = "Example123!"
         )
     )
-
     val user: StateFlow<UserProfile> = _user //read only version of MutableStateFlow
 
     fun generateUser() {
@@ -45,7 +44,9 @@ class UserProfileViewModel : ViewModel() {
     fun fetchRandomUser() {
         viewModelScope.launch {
             try {
-                val response = RandomUserRetrofitInstance.api.getRandomUsers()
+                val response = RandomUserRetrofitInstance.api.getRandomUsers(
+                    nationality = _selectedNationality.value
+                )
                 val apiUser = response.results.first()
 
                 _user.value = UserProfile(
@@ -69,4 +70,14 @@ class UserProfileViewModel : ViewModel() {
             }
         }
     }
+
+    //to choose nationality
+    private val _selectedNationality = MutableStateFlow<String?>(null)
+
+    val selectedNationality: StateFlow<String?> = _selectedNationality
+
+    fun updateNationality(nationality: String?) {
+        _selectedNationality.value = nationality
+    }
+
 }

@@ -24,6 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import au.edu.jcu.assessment.utilityapp.screen.SettingsScreen
 import au.edu.jcu.assessment.utilityapp.screen.UtilityScreen
 import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -43,6 +45,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun UtilityApp() {
     var selectedTab: String by remember { mutableStateOf("Utility") }
+    val userViewModel: UserProfileViewModel = viewModel()
 
     Scaffold(
         bottomBar = {
@@ -64,8 +67,8 @@ fun UtilityApp() {
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedTab) {
-                "Utility" -> UtilityScreen()
-                "Settings" -> SettingsScreen()
+                "Utility" -> UtilityScreen(userViewModel = userViewModel)
+                "Settings" -> SettingsScreen(userViewModel = userViewModel)
             }
         }
     }

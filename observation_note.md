@@ -68,3 +68,17 @@ I learned how API responses are converted into Kotlin objects and how updating S
 I also resolved a naming conflict with an existing Retrofit instance and successfully tested the API using Logcat.
 
 **Next step:** Implement loading indicators and network error handling.
+
+**Future improvements:** Improve readability for long addresses, redesign the profile layout into clearer sections, align the app colours with its logo, support light/dark mode, and allow testers to choose which generated fields are visible.
+
+---
+## 12 October 2026
+
+Learned how to share ViewModel between two screen using :
+val userViewModel: UserProfileViewModel = viewModel()
+and:
+when (selectedTab) {
+"Utility" -> UtilityScreen(userViewModel = userViewModel)
+"Settings" -> SettingsScreen(userViewModel = userViewModel)
+}
+Implemented a dropdown to select nationality with Material 3 Component using pair and list 
