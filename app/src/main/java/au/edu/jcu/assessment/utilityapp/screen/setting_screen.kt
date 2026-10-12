@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Switch
 
 @Composable
 fun SettingsScreen(
@@ -76,6 +77,10 @@ fun SettingsScreen(
         "username" to "Username",
         "password" to "Password"
     )
+    val darkModeEnabled by userViewModel
+        .darkModeEnabled
+        .collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -163,6 +168,26 @@ fun SettingsScreen(
 
                 Text(text = label)
             }
+        }
+
+        Text(
+            text = "Appearance",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Dark mode")
+
+            Switch(
+                checked = darkModeEnabled,
+                onCheckedChange = { enabled ->
+                    userViewModel.updateDarkMode(enabled)
+                }
+            )
         }
     }
 }

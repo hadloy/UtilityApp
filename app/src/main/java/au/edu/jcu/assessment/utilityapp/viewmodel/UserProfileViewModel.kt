@@ -107,4 +107,13 @@ class UserProfileViewModel : ViewModel() {
             _visibleFields.value - field
         }
     }
+
+    private val _darkModeEnabled = MutableStateFlow(false)
+
+    val darkModeEnabled: StateFlow<Boolean> = _darkModeEnabled
+
+    fun updateDarkMode(enabled: Boolean) {
+        _darkModeEnabled.value = enabled
+    }
+
 }

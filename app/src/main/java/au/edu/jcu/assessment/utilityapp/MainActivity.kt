@@ -26,6 +26,7 @@ import au.edu.jcu.assessment.utilityapp.screen.UtilityScreen
 import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 class MainActivity : ComponentActivity() {
@@ -33,20 +34,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MobileTech_UtilityAppTheme {
-                UtilityApp()
+            val userViewModel: UserProfileViewModel = viewModel()
+            val darkModeEnabled by userViewModel
+                .darkModeEnabled
+                .collectAsStateWithLifecycle()
+            MobileTech_UtilityAppTheme(
+                darkTheme = darkModeEnabled
+            ) {
+                UtilityApp(userViewModel = userViewModel)
             }
         }
     }
 }
-
-// Preview removed to test K2 compiler bug
-
 @Composable
-fun UtilityApp() {
-    var selectedTab: String by remember { mutableStateOf("Utility") }
-    val userViewModel: UserProfileViewModel = viewModel()
-
+fun UtilityApp(
+    userViewModel: UserProfileViewModel
+) {
+    var selectedTab: String by remember {
+        mutableStateOf("Utility")
+    }
     Scaffold(
         bottomBar = {
             NavigationBar {
