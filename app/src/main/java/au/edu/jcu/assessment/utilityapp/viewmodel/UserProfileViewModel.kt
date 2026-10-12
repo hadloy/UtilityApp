@@ -8,9 +8,13 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import au.edu.jcu.assessment.utilityapp.api.RandomUserRetrofitInstance
 import kotlinx.coroutines.launch
+import au.edu.jcu.assessment.utilityapp.repository.UserRepository
 
 class UserProfileViewModel : ViewModel() {
 
+    private val userRepository = UserRepository(
+        RandomUserRetrofitInstance.api
+    )
     private val _user = MutableStateFlow(
         UserProfile(
             gender = "female",
@@ -44,7 +48,7 @@ class UserProfileViewModel : ViewModel() {
     fun fetchRandomUser() {
         viewModelScope.launch {
             try {
-                val response = RandomUserRetrofitInstance.api.getRandomUsers(
+                val response = userRepository.getRandomUsers(
                     nationality = _selectedNationality.value
                 )
                 val apiUser = response.results.first()

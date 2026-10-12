@@ -74,11 +74,23 @@ I also resolved a naming conflict with an existing Retrofit instance and success
 ---
 ## 12 October 2026
 
-Learned how to share ViewModel between two screen using :
+# Development Observations — 12 October 2026
+
+Learned how to share a ViewModel between two screens using:
+
 val userViewModel: UserProfileViewModel = viewModel()
-and:
+And passing the same ViewModel instance to both screens:
 when (selectedTab) {
-"Utility" -> UtilityScreen(userViewModel = userViewModel)
-"Settings" -> SettingsScreen(userViewModel = userViewModel)
+    "Utility" -> UtilityScreen(userViewModel = userViewModel)
+    "Settings" -> SettingsScreen(userViewModel = userViewModel)
 }
-Implemented a dropdown to select nationality with Material 3 Component using pair and list 
+
+Implemented a dropdown to select nationality using Material 3 components, Kotlin `Pair` and `List`. Learned how `.first`, `.second`, `firstOrNull()` and nullable values work.
+Learned the difference between `remember` for temporary UI state (opening/closing a dropdown) and `StateFlow` for shared state (selected nationality).
+Implemented field selection using checkboxes, allowing users to choose which profile information to display.
+Implemented a dark mode switch using Material 3 `Switch`, `StateFlow<Boolean>` and the existing app theme. Learned how changes in ViewModel state can update the appearance of both screens.
+Made the Utility and Settings screens scrollable using `verticalScroll(rememberScrollState())` to support smaller screens and longer content.
+Created a `UserRepository` class to separate API data access from the ViewModel.
+Understood the application architecture:
+Compose UI → ViewModel → Repository → Retrofit → Random User API
+Tested nationality selection, field visibility, dark mode and API requests after implementing the changes.
