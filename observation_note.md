@@ -74,9 +74,7 @@ I also resolved a naming conflict with an existing Retrofit instance and success
 ---
 ## 12 October 2026
 
-# Development Observations — 12 October 2026
-
-Learned how to share a ViewModel between two screens using:
+I learned how to share a ViewModel between two screens using:
 
 val userViewModel: UserProfileViewModel = viewModel()
 And passing the same ViewModel instance to both screens:
@@ -85,12 +83,19 @@ when (selectedTab) {
     "Settings" -> SettingsScreen(userViewModel = userViewModel)
 }
 
-Implemented a dropdown to select nationality using Material 3 components, Kotlin `Pair` and `List`. Learned how `.first`, `.second`, `firstOrNull()` and nullable values work.
-Learned the difference between `remember` for temporary UI state (opening/closing a dropdown) and `StateFlow` for shared state (selected nationality).
-Implemented field selection using checkboxes, allowing users to choose which profile information to display.
-Implemented a dark mode switch using Material 3 `Switch`, `StateFlow<Boolean>` and the existing app theme. Learned how changes in ViewModel state can update the appearance of both screens.
+I implemented a dropdown to select nationality using Material 3 components, Kotlin `Pair` and `List`. Learned how `.first`, `.second`, `firstOrNull()` and nullable values work.
+I learned the difference between `remember` for temporary UI state (opening/closing a dropdown) and `StateFlow` for shared state (selected nationality).
+I implemented field selection using checkboxes, allowing users to choose which profile information to display,  and implemented a dark mode switch using Material 3 `Switch`, `StateFlow<Boolean>` and the existing app theme. Learned how changes in ViewModel state can update the appearance of both screens.
 Made the Utility and Settings screens scrollable using `verticalScroll(rememberScrollState())` to support smaller screens and longer content.
-Created a `UserRepository` class to separate API data access from the ViewModel.
+I created a `UserRepository` class to separate API data access from the ViewModel.
 Understood the application architecture:
 Compose UI → ViewModel → Repository → Retrofit → Random User API
-Tested nationality selection, field visibility, dark mode and API requests after implementing the changes.
+I tested nationality selection, field visibility, dark mode and API requests after implementing the changes.
+
+---
+## 13 October 2026
+
+I customised navigation using NavigationBarItemDefaults.colors() and MaterialTheme.colorScheme.primaryContainer, I also updated the colour theme and added the app icon on top of the utility screen to maintain coherence between my app style and app launcher icon.
+I improved the app structure by removing the unused quote app model and unused template specificities (such as some colours).
+I reviewed the code, removed unused imports, and verified indentation/spacing using 'ctrl-opt-o' and 'ctrl-opt-l'
+I changed the "Home" icon to a group icon and named it "Generator"; I added a new import in Gradle to access the specific Material Icons library needed.

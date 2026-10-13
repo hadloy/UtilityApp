@@ -1,42 +1,49 @@
-
 package au.edu.jcu.assessment.utilityapp.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import au.edu.jcu.assessment.utilityapp.model.UserProfile
-import coil.compose.AsyncImage //load images
-import androidx.compose.foundation.layout.size // set image dimension
-import androidx.compose.foundation.shape.CircleShape //define shape
-import androidx.compose.ui.draw.clip //crop image
-import androidx.compose.ui.Alignment //position in layout
-import androidx.compose.ui.layout.ContentScale //how to resize an image
-import androidx.compose.material3.Button
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import au.edu.jcu.assessment.utilityapp.R
 import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-
+import coil.compose.AsyncImage
 
 @Composable
 fun UtilityScreen(
-    userViewModel: UserProfileViewModel = viewModel() //pass the view model
+    //pass the view model
+    userViewModel: UserProfileViewModel = viewModel()
 ) {
-    val sampleUser by userViewModel.user.collectAsStateWithLifecycle()//collect user data from view model
-    val visibleFields by userViewModel.visibleFields.collectAsStateWithLifecycle()//verify which field is visible
+    //collect user data from view model
+    val sampleUser by userViewModel.user.collectAsStateWithLifecycle()
+    //verify which field is visible
+    val visibleFields by userViewModel.visibleFields.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,21 +52,34 @@ fun UtilityScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
-        Text(
-            text = "QA Test Data Generator",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        //display app name + icon
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.qa_app_icon),
+                contentDescription = "QA Test Data Generator app icon",
+                modifier = Modifier.size(48.dp)
+            )
+            Text(
+                text = "QA Test Data Generator",
+                style = MaterialTheme.typography.headlineMedium
+            )
+        }
 
         Text(
             text = "Generate fictional user data for software testing.",
             style = MaterialTheme.typography.bodyMedium
         )
-
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            )
         ) {
 
-            Column(
+        Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -81,31 +101,31 @@ fun UtilityScreen(
                 }
                 //display user data if in visible fields
                 if ("gender" in visibleFields) {
-                    Text(text = "Gender: ${sampleUser.gender}")
+                    ProfileField("Gender", sampleUser.gender)
                 }
                 if ("name" in visibleFields) {
-                    Text(text = "Name: ${sampleUser.name}")
+                    ProfileField("Name",sampleUser.name)
                 }
                 if ("email" in visibleFields) {
-                    Text(text = "Email: ${sampleUser.email}")
+                    ProfileField(label = "Email", value= sampleUser.email)
                 }
                 if ("phone" in visibleFields) {
-                    Text(text = "Phone: ${sampleUser.phone}")
+                    ProfileField(label = "Phone", value = sampleUser.phone)
                 }
                 if ("nationality" in visibleFields) {
-                    Text(text = "Nationality: ${sampleUser.nationality}")
+                    ProfileField(label = "Nationality", value = sampleUser.nationality)
                 }
                 if ("address" in visibleFields) {
-                    Text(text = "Address: ${sampleUser.address}")
+                    ProfileField(label = "Address", value = sampleUser.address)
                 }
                 if ("birthday" in visibleFields) {
-                    Text(text = "Birthday: ${sampleUser.birthday}")
+                    ProfileField(label = "Birthday", value = sampleUser.birthday)
                 }
                 if ("username" in visibleFields) {
-                    Text(text = "Username: ${sampleUser.username}")
+                    ProfileField(label = "Username", value = sampleUser.username)
                 }
                 if ("password" in visibleFields) {
-                    Text(text = "Password: ${sampleUser.password}")
+                    ProfileField(label = "Password", value = sampleUser.password)
                 }
             }
         }
@@ -116,4 +136,24 @@ fun UtilityScreen(
             Text("Generate User")
         }
     }
+}
+@Composable
+//To give a string multiple styles
+fun ProfileField(
+    label: String,
+    value: String
+) {
+    Text(
+        text = buildAnnotatedString {
+            withStyle(
+                style = SpanStyle(fontWeight = FontWeight.Bold)
+            ) {
+                append("$label: ")
+            }
+            append(value)
+        },
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodyMedium
+    )
 }

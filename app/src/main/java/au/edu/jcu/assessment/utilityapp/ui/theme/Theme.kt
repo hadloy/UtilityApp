@@ -9,28 +9,35 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryBlue,
-    secondary = CyanBlue,
-    tertiary = DeepPurple
+    primary = CyanBlue,
+    onPrimary = DarkNavy,
+    secondary = TurquoiseGreen,
+    tertiary = DeepPurple,
+
+    primaryContainer = Color(0xFF174B75),
+    onPrimaryContainer = White
 )
+
 
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryBlue,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    onPrimary = White,
+    secondary = CyanBlue,
+    tertiary = DeepPurple,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    background = Color(0xFFF8FAFF),
+    surface = Color(0xFFF8FAFF),
+    surfaceContainerLow = Color(0xFFEAF1FF),
+    surfaceContainer = Color(0xFFE3ECFA),
+
+    primaryContainer = Color(0xFFD8E6FF),
+    onPrimaryContainer = DarkNavy
 )
+
+
 
 @Composable
 fun MobileTech_UtilityAppTheme(

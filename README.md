@@ -1,71 +1,19 @@
-# MobileTech Utility App
+# QA Test Data Generator
 
-This is a basic Android app template for **Assessment 1: Utility App**.
-It provides the structure for a simple tabular UI using **Jetpack Compose** and **Material Design 3**.
+## Project Overview
 
----
+QA Test Data Generator is an Android utility application developed for CP5307 Mobile Computing Assessment 1 at James Cook University by Marion Andriolo.
 
-## Getting Started
+The application generates fictional user profiles using the Random User API, helping software testers obtain sample data for testing registration forms, user accounts and other applications.
 
-### How to Run
-1. Clone or download this repo  
-2. Open in Android Studio  
-3. Run on an emulator or physical device (API 26+ recommended)  
+## Features
 
----
-
-## Composables
-
-### UtilityApp()
-- Contains the screen layout using a Scaffold
-- Toggles content between Utility and Settings
-
-### UtilityScreen()
-- Displays a simple counter (replace with your utility logic)  
-- Includes a button to increment the counter
-
-### SettingsScreen()
-- Placeholder for user preferences or configuration  
-- Can be extended to modify main screen behavior (e.g., theme, units, limits)  
-
----
-
-## Key Concepts Covered
-
-| Week | Concept                        | Used In                          |
-|------|--------------------------------|----------------------------------|
-| 1    | Kotlin + Android Studio         | MainActivity.kt |
-| 2    | Jetpack Compose Layouts         | UtilityApp(), UtilityScreen(), SettingsScreen()   |
-| 3    | Material Design 3               | MobileTechUtilityAppTheme, MaterialTheme.typography |
-| 4    | ViewModel | Not included in starter          |
-| 5    | Retrofit  | Not included in starter          |
-
----
-
-## Suggested Extensions
-- Replace counter with a real utility (e.g., hydration tracker, timer)  
-- Add a ViewModel for state management  
-- Use SharedPreferences or DataStore to persist settings  
-- Add a simple API call using Retrofit (e.g., fetch weather or quotes)  
-
----
-
-## 📚 License
-This template is provided for educational use in CP3406.  
-Feel free to modify and extend it for your assessment.
-
-
-# CP5307 Utility App
-
-Utility App assessment project for CP5307 Mobile Application Development.
-
-## Current Progress
-
-- Android Studio project created
-- Git version control configured
-- GitHub repository connected
-- Initial project commit completed
-- Assessment planning started
+- Generate fictional user profiles containing gender, names, emails, phone numbers, addresses, dates of birth, usernames, passwords, nationalities, and profile pictures.
+- Select a specific nationality or generate a random nationality.
+- Choose which profile fields are visible.
+- Switch between light and dark mode.
+- Navigate between Utility and Settings screens.
+- Scroll through profile information on different screen sizes.
 
 ## Technologies
 
@@ -73,16 +21,55 @@ Utility App assessment project for CP5307 Mobile Application Development.
 - Android Studio
 - Jetpack Compose
 - Material Design 3
+- ViewModel and StateFlow
+- Retrofit and Gson
+- Kotlin Coroutines
+- Coil for image loading
+- Git and GitHub
 
-## Planned Development
+## Application Architecture
 
-- Main utility screen
-- Settings screen
-- ViewModel architecture
-- Repository pattern
-- Dependency injection
-- External API integration using Retrofit
+The application follows a layered structure:
 
-## Current Status
+`Compose UI → ViewModel → Repository → Retrofit → Random User API`
 
-Project setup phase.
+- Compose UI: Displays profiles and settings.
+- ViewModel: Manages user profiles, nationality selection, visible fields and theme preferences.
+- Repository: Separates API data access from UI state management.
+- Retrofit: Fetches JSON data from the Random User API.
+- Data models: Represent API responses and user profiles.
+
+## How to Run
+
+1. Clone or download this GitHub repository.
+2. Open the project in Android Studio.
+3. Allow Gradle to synchronise.
+4. Run the application on an Android emulator or compatible device.
+5. Open Settings to customise the generated profiles.
+6. Return to Utility and press Generate User.
+
+An internet connection is required to fetch new profiles.
+
+## API
+
+This project uses the Random User API:
+
+https://randomuser.me/
+
+The nationality setting is passed through the optional `nat` query parameter.
+
+## Testing
+
+The application successfully passed nine manual functional tests covering API profile generation, nationality filtering, field visibility, light and dark mode, navigation, scrolling and screen rotation. Both screens were checked for usability and layout issues.
+
+## Limitations
+
+- The application generates one profile at a time.
+- Settings are not permanently saved after the application process ends.
+- Network failures are logged rather than displayed through a dedicated error message.
+
+## Development
+
+The GitHub commit history documents the project's development, including UI implementation, API integration, settings and architecture improvements.
+
+This project was developed for educational purposes.
