@@ -32,7 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 // ViewModel and lifecycle imports.
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,6 +46,18 @@ import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
 
 // Library used to load profile pictures from URLs.
 import coil.compose.AsyncImage
+
+// Material icons used in the profile fields.
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Lock
+
+// Displays an icon in a Compose layout.
+import androidx.compose.material3.Icon
 
 @Composable
 fun UtilityScreen(
@@ -85,8 +99,9 @@ fun UtilityScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(16.dp),
+
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
 
         Row(
@@ -112,7 +127,7 @@ fun UtilityScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface //white card
+                containerColor = MaterialTheme.colorScheme.surface
             )
         ) {
 
@@ -120,15 +135,11 @@ fun UtilityScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                    .padding(12.dp),
+                // Consistent spacing without stretching the content.
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Sample User Profile",
-                    style = MaterialTheme.typography.titleMedium
-                )
 
                 // Display the profile picture only if enabled in Settings.
                 if ("picture" in visibleFields) {
@@ -208,35 +219,38 @@ fun UtilityScreen(
 // Reusable composable that displays one profile field.
 @Composable
 fun ProfileField(
-    label: String,//ex:name
-    value: String,//ex: Sophie Taylor
+    label: String,
+    value: String,
     modifier: Modifier = Modifier
 ) {
 
-    // Individual information Card.
+    // Individual card for the profile information.
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )
     ) {
-        // Field label above its value.
+        // Arrange the field label and value vertically.
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp)
         ) {
-            Text(
+            Text( // Field label, such as EMAIL or PHONE.
                 text = label.uppercase(),
-                style = MaterialTheme.typography.labelSmall,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary
             )
-            Text(
+            Text(// Generated user data.
                 text = value,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface //adapt color to dark mode
+                fontSize = 14.sp,
+                lineHeight = 18.sp,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
+
     }
 }
