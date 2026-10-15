@@ -1,6 +1,7 @@
 package au.edu.jcu.assessment.utilityapp.screen
 
 // Jetpack Compose UI components.
+import android.R.attr.label
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,15 +50,19 @@ import coil.compose.AsyncImage
 
 // Material icons used in the profile fields.
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Wc
 
 // Displays an icon in a Compose layout.
 import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
 fun UtilityScreen(
@@ -166,6 +171,7 @@ fun UtilityScreen(
                         ProfileField(
                             label = "Name",
                             value = sampleUser.name,
+                            icon = Icons.Filled.Person,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -183,9 +189,23 @@ fun UtilityScreen(
                         ) {
 
                             fieldPair.forEach { (label, value) ->
+                                // Choose the icon for each field
+                                val fieldIcon = when (label) {
+                                    "Gender" -> Icons.Filled.Wc
+                                    "Nationality" -> Icons.Filled.Public
+                                    "Email" -> Icons.Filled.Email
+                                    "Phone" -> Icons.Filled.Phone
+                                    "Address" -> Icons.Filled.LocationOn
+                                    "Birthday" -> Icons.Filled.DateRange
+                                    "Username" -> Icons.Filled.AccountCircle
+                                    "Password" -> Icons.Filled.Lock
+                                    else -> null
+                                }
+
                                 ProfileField(
                                     label = label,
                                     value = value,
+                                    icon = fieldIcon,
                                     modifier = Modifier
                                         .weight(1f)
                                         .fillMaxHeight()
@@ -219,9 +239,10 @@ fun UtilityScreen(
 // Reusable composable that displays one profile field.
 @Composable
 fun ProfileField(
+    modifier: Modifier = Modifier,
     label: String,
     value: String,
-    modifier: Modifier = Modifier
+    icon: ImageVector? = null
 ) {
 
     // Individual card for the profile information.
@@ -232,24 +253,39 @@ fun ProfileField(
         )
     ) {
         // Arrange the field label and value vertically.
-        Column(
+        Column( // Keep field label and value vertically aligned.
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(3.dp)
         ) {
-            Text( // Field label, such as EMAIL or PHONE.
-                text = label.uppercase(),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(// Generated user data.
+            Row(// First line: icon and field label.
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Text(// Display the field name next to icon.
+                    text = label.uppercase(),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Text(
                 text = value,
                 fontSize = 14.sp,
                 lineHeight = 18.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.fillMaxWidth()
             )
+
         }
 
     }
