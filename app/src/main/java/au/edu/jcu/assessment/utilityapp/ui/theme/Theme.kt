@@ -10,6 +10,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 
 private val DarkColorScheme = darkColorScheme(
     primary = CyanBlue,
@@ -18,9 +19,8 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = DeepPurple,
 
     primaryContainer = Color(0xFF174B75),
-    onPrimaryContainer = White
+    onPrimaryContainer = White,
 )
-
 
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryBlue,
@@ -28,13 +28,21 @@ private val LightColorScheme = lightColorScheme(
     secondary = CyanBlue,
     tertiary = DeepPurple,
 
+    // Main application background
     background = Color(0xFFF8FAFF),
-    surface = Color(0xFFF8FAFF),
-    surfaceContainerLow = Color(0xFFEAF1FF),
+    surface = White,
+
+    // Soft blue backgrounds for cards and sections
+    surfaceContainerLow = LightBlue,
     surfaceContainer = Color(0xFFE3ECFA),
 
+    // Selected navigation elements and other accents
     primaryContainer = Color(0xFFD8E6FF),
-    onPrimaryContainer = DarkNavy
+    onPrimaryContainer = DarkNavy,
+
+    // Main text colour
+    onBackground = DarkNavy,
+    onSurface = DarkNavy
 )
 
 

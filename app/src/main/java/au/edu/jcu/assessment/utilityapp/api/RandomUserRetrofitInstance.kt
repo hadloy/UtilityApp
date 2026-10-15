@@ -2,7 +2,7 @@ package au.edu.jcu.assessment.utilityapp.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
+//Configures Retrofit, including the base URL and JSON converter
 object RandomUserRetrofitInstance {
 
     private const val BASE_URL = "https://randomuser.me/"

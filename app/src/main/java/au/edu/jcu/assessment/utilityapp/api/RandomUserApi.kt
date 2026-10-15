@@ -4,6 +4,7 @@ import au.edu.jcu.assessment.utilityapp.model.RandomUserResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+//Defines which API endpoint to call and which parameters to send
 //Suspend Allows the function to perform a network operation without blocking the main thread
 interface RandomUserApi {
     @GET("api/")

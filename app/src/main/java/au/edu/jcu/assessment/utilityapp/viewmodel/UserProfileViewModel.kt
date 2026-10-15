@@ -10,11 +10,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
+// ViewModel manages the application's data and UI state.
+// It connects the user interface to the Repository.
 class UserProfileViewModel : ViewModel() {
 
+    // Create the Repository and pass it the Retrofit API service.
+    // The Repository is responsible for requesting data from the API.
     private val userRepository = UserRepository(
         RandomUserRetrofitInstance.api
     )
+    // Store the current user profile in a MutableStateFlow.
+    // MutableStateFlow allows the ViewModel to update the value.
+    // A sample user is displayed before the first API request.
     private val _user = MutableStateFlow(
         UserProfile(
             gender = "female",
@@ -32,14 +40,19 @@ class UserProfileViewModel : ViewModel() {
     //read only version of MutableStateFlow
     val user: StateFlow<UserProfile> = _user
 
+    // Request a new random user from the API.
+    // Called when the Generate User button is pressed.
     fun fetchRandomUser() {
+        // Launch a coroutine with the ViewModel lifecycle.
         viewModelScope.launch {
+            // Handle possible errors during the API request.
             try {
                 val response = userRepository.getRandomUsers(
                     nationality = _selectedNationality.value
                 )
                 val apiUser = response.results.first()
 
+                //convert API response
                 _user.value = UserProfile(
                     name = "${apiUser.name.first} ${apiUser.name.last}",
                     gender = apiUser.gender,
@@ -52,11 +65,13 @@ class UserProfileViewModel : ViewModel() {
                     password = apiUser.login.password,
                     pictureUrl = apiUser.picture.large
                 )
-
+                // Write debugging information to Android Studio Logcat.
                 Log.d("RandomUserAPI", "Name: ${apiUser.name.first}")
                 Log.d("RandomUserAPI", "Email: ${apiUser.email}")
 
             } catch (e: Exception) {
+                // Log any error, such as a network failure.
+                // Currently, the error is not displayed to the user.
                 Log.e("RandomUserAPI", "Error fetching user", e)
             }
         }
@@ -70,7 +85,7 @@ class UserProfileViewModel : ViewModel() {
     fun updateNationality(nationality: String?) {
         _selectedNationality.value = nationality
     }
-
+    // Store the visible fields for the Generator screen.
     private val _visibleFields = MutableStateFlow(
         setOf(
             "picture",
@@ -86,6 +101,7 @@ class UserProfileViewModel : ViewModel() {
         )
     )
 
+    // Expose the selected visible fields as read-only state
     val visibleFields: StateFlow<Set<String>> = _visibleFields
 
     fun updateFieldVisibility(
@@ -103,6 +119,7 @@ class UserProfileViewModel : ViewModel() {
 
     val darkModeEnabled: StateFlow<Boolean> = _darkModeEnabled
 
+    //dark mode toggle
     fun updateDarkMode(enabled: Boolean) {
         _darkModeEnabled.value = enabled
     }
