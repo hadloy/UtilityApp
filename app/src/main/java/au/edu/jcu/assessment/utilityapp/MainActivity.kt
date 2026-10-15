@@ -29,6 +29,19 @@ import au.edu.jcu.assessment.utilityapp.screen.UtilityScreen
 import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
 import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
 
+// Detect whether the device is in portrait or landscape.
+import android.content.res.Configuration
+import androidx.compose.ui.platform.LocalConfiguration
+
+// Display navigation vertically in landscape mode.
+import androidx.compose.material3.NavigationRail
+
+// Arrange navigation and screen content horizontally.
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.NavigationRailItem
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,36 +66,80 @@ fun UtilityApp(
     var selectedTab: String by remember {
         mutableStateOf("Utility")
     }
+    val configuration = LocalConfiguration.current // Read device configuration.
+    val isLandscape = //check if is in landscape
+        configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = {
-                        Icon(Icons.Filled.Groups, contentDescription = "Generator")
-                    },
-                    label = { Text("Generator") },
-                    selected = selectedTab == "Utility",
-                    onClick = { selectedTab = "Utility" },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = MaterialTheme.colorScheme.primaryContainer
+            if (!isLandscape) {
+                NavigationBar {
+                    NavigationBarItem(
+                        icon = {
+                            Icon(Icons.Filled.Groups, contentDescription = "Generator")
+                        },
+                        label = { Text("Generator") },
+                        selected = selectedTab == "Utility",
+                        onClick = { selectedTab = "Utility" },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.primaryContainer
+                        )
                     )
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings") },
-                    label = { Text("Settings") },
-                    selected = selectedTab == "Settings",
-                    onClick = { selectedTab = "Settings" },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = MaterialTheme.colorScheme.primaryContainer
-                            )
-                )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings") },
+                        label = { Text("Settings") },
+                        selected = selectedTab == "Settings",
+                        onClick = { selectedTab = "Settings" },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.primaryContainer
+                        )
+                    )
+                }
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            when (selectedTab) {
-                "Utility" -> UtilityScreen(userViewModel = userViewModel)
-                "Settings" -> SettingsScreen(userViewModel = userViewModel)
+        // Arrange the navigation and screen side by side.
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+
+            // Display vertical navigation only in landscape.
+            if (isLandscape) {
+                NavigationRail {
+                    NavigationRailItem(
+                        selected = selectedTab == "Utility",
+                        onClick = { selectedTab = "Utility" },
+                        icon = {
+                            Icon(
+                                Icons.Filled.Groups,
+                                contentDescription = "Generator"
+                            )
+                        },
+                        label = { Text("Generator") }
+                    )
+
+                    NavigationRailItem(
+                        selected = selectedTab == "Settings",
+                        onClick = { selectedTab = "Settings" },
+                        icon = {
+                            Icon(
+                                Icons.Filled.Settings,
+                                contentDescription = "Settings"
+                            )
+                        },
+                        label = { Text("Settings") }
+                    )
+                }
+            }
+            Box(modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+            ) {
+                when (selectedTab) {
+                    "Utility" -> UtilityScreen(userViewModel = userViewModel)
+                    "Settings" -> SettingsScreen(userViewModel = userViewModel)
+                }
             }
         }
     }

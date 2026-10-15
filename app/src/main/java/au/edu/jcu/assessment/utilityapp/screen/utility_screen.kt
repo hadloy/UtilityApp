@@ -1,7 +1,6 @@
 package au.edu.jcu.assessment.utilityapp.screen
 
 // Jetpack Compose UI components.
-import android.R.attr.label
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -64,12 +63,21 @@ import androidx.compose.material.icons.filled.Wc
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.vector.ImageVector
 
+// Provides information about the device configuration.
+import androidx.compose.ui.platform.LocalConfiguration
+
+// Contains constants for portrait and landscape orientations.
+import android.content.res.Configuration
+
 @Composable
 fun UtilityScreen(
     userViewModel: UserProfileViewModel = viewModel()
 ) {
     val sampleUser by userViewModel.user.collectAsStateWithLifecycle() //update screen when user changes
     val visibleFields by userViewModel.visibleFields.collectAsStateWithLifecycle()//Verify which field is enabled in settings
+    val configuration = LocalConfiguration.current //read device configuration and update when rotation
+    val isLandscape =
+        configuration.orientation == Configuration.ORIENTATION_LANDSCAPE // verify if in landscape
 
     // Create a list containing only the fields enabled in Settings.
     val profileFields = buildList {
@@ -99,139 +107,149 @@ fun UtilityScreen(
         }
     }
 
-    // Main screen layout.
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+    if (isLandscape) {// Choose which screen layout to display.
 
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.qa_app_icon),
-                contentDescription = "QA Test Data Generator app icon",
-                modifier = Modifier.size(48.dp)
-            )
-            Text(
-                text = "QA Test Data Generator",
-                style = MaterialTheme.typography.headlineMedium
-            )
-        }
-        Text(
-            text = "Generate fictional user data for software testing.",
-            style = MaterialTheme.typography.bodyMedium
+        LandscapeProfileLayout(// Display landscape composable.
+            pictureUrl = sampleUser.pictureUrl,
+            userName = sampleUser.name,
+            profileFields = profileFields,
+            showPicture = "picture" in visibleFields,
+            showName = "name" in visibleFields,
+            onGenerateClick = {
+                userViewModel.fetchRandomUser()
+            }
         )
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
 
-        // Main Card containing the generated user profile.
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
 
-            // Arrange the profile title, picture and fields vertically.
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                // Consistent spacing without stretching the content.
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.qa_app_icon),
+                    contentDescription = "QA Test Data Generator app icon",
+                    modifier = Modifier.size(48.dp)
+                )
+                Text(
+                    text = "QA Test Data Generator",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+            Text(
+                text = "Generate fictional user data for software testing.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            // Main Card containing the generated user profile.
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             ) {
 
-                // Display the profile picture only if enabled in Settings.
-                if ("picture" in visibleFields) {
-                    // AsyncImage loads the image from the API URL.
-                    AsyncImage(
-                        model = sampleUser.pictureUrl,
-                        contentDescription = "User profile picture",
-
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop //circular shape
-                    )
-                }
-
-                // Column containing all visible profile fields.
+                // Arrange the profile title, picture and fields vertically.
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    // Display Name on one row full width
-                    if ("name" in visibleFields) {
-                        ProfileField(
-                            label = "Name",
-                            value = sampleUser.name,
-                            icon = Icons.Filled.Person,
-                            modifier = Modifier.fillMaxWidth()
+                    // Display the profile picture
+                    if ("picture" in visibleFields) {
+                        AsyncImage(
+                            model = sampleUser.pictureUrl,
+                            contentDescription = "User profile picture",
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop //circular shape
                         )
                     }
 
-                    // Split the fields into groups of two.
-                    // If a field is hidden, the remaining fields readjust
-                    profileFields.chunked(2).forEach { fieldPair ->
+                    // Column containing all visible profile fields.
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
 
-                        // Display up to two cards horizontally.
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min), //size of tallest card
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
+                        // Display Name on one row full width
+                        if ("name" in visibleFields) {
+                            ProfileField(
+                                label = "Name",
+                                value = sampleUser.name,
+                                icon = Icons.Filled.Person,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
 
-                            fieldPair.forEach { (label, value) ->
-                                // Choose the icon for each field
-                                val fieldIcon = when (label) {
-                                    "Gender" -> Icons.Filled.Wc
-                                    "Nationality" -> Icons.Filled.Public
-                                    "Email" -> Icons.Filled.Email
-                                    "Phone" -> Icons.Filled.Phone
-                                    "Address" -> Icons.Filled.LocationOn
-                                    "Birthday" -> Icons.Filled.DateRange
-                                    "Username" -> Icons.Filled.AccountCircle
-                                    "Password" -> Icons.Filled.Lock
-                                    else -> null
+                        // Split the fields into groups of two.
+                        // If a field is hidden, the remaining fields readjust
+                        profileFields.chunked(2).forEach { fieldPair ->
+
+                            // Display up to two cards horizontally.
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(IntrinsicSize.Min), //size of tallest card
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+
+                                fieldPair.forEach { (label, value) ->
+                                    // Choose the icon for each field
+                                    val fieldIcon = when (label) {
+                                        "Gender" -> Icons.Filled.Wc
+                                        "Nationality" -> Icons.Filled.Public
+                                        "Email" -> Icons.Filled.Email
+                                        "Phone" -> Icons.Filled.Phone
+                                        "Address" -> Icons.Filled.LocationOn
+                                        "Birthday" -> Icons.Filled.DateRange
+                                        "Username" -> Icons.Filled.AccountCircle
+                                        "Password" -> Icons.Filled.Lock
+                                        else -> null
+                                    }
+
+                                    ProfileField(
+                                        label = label,
+                                        value = value,
+                                        icon = fieldIcon,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxHeight()
+                                    )
                                 }
-
-                                ProfileField(
-                                    label = label,
-                                    value = value,
-                                    icon = fieldIcon,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxHeight()
-                                )
-                            }
-                            //filled the last row if only one field
-                            if (fieldPair.size == 1) {
-                                Spacer(
-                                    modifier = Modifier.weight(1f)
-                                )
+                                //filled the last row if only one field
+                                if (fieldPair.size == 1) {
+                                    Spacer(
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
-        // Button to request another random user from the API.
-        Button(
-            onClick = {
-                userViewModel.fetchRandomUser()
-            },
+            // Button to request another random user from the API.
+            Button(
+                onClick = {
+                    userViewModel.fetchRandomUser()
+                },
 
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Generate User")
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Generate User")
+            }
         }
     }
 }
@@ -290,3 +308,98 @@ fun ProfileField(
 
     }
 }
+
+@Composable
+fun LandscapeProfileLayout(
+    pictureUrl: String,
+    userName: String,
+    profileFields: List<Pair<String, String>>,
+    showPicture: Boolean,
+    showName: Boolean, //Check if Name is enabled in Settings
+    onGenerateClick: () -> Unit
+) {
+    // Arrange the profile into left and right sections.
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // LEFT SECTION: picture, name and Generate button.
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            if (showPicture) {// Only display the picture when enabled.
+                AsyncImage(
+                    model = pictureUrl,
+                    contentDescription = "User profile picture",
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            if (showName) { // Only display Name when enabled in Settings.
+                ProfileField(
+                    label = "Name",
+                    value = userName,
+                    icon = Icons.Filled.Person,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Button(
+                onClick = onGenerateClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Generate User")
+            }
+        }
+
+        // RIGHT SECTION: remaining user information.
+        Column(
+            modifier = Modifier.weight(3f)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            // Display the remaining fields in two columns.
+            profileFields.chunked(2).forEach { fieldPair ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    // Display each field in the current row.
+                    fieldPair.forEach { (label, value) ->
+                        val fieldIcon = when (label) {
+                            "Gender" -> Icons.Filled.Wc
+                            "Nationality" -> Icons.Filled.Public
+                            "Email" -> Icons.Filled.Email
+                            "Phone" -> Icons.Filled.Phone
+                            "Address" -> Icons.Filled.LocationOn
+                            "Birthday" -> Icons.Filled.DateRange
+                            "Username" -> Icons.Filled.AccountCircle
+                            "Password" -> Icons.Filled.Lock
+                            else -> null
+                        }
+                        ProfileField(
+                            label = label,
+                            value = value,
+                            icon = fieldIcon,
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        )
+                    }
+                    if (fieldPair.size == 1) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+            }
+        }
+    }
+}
+
