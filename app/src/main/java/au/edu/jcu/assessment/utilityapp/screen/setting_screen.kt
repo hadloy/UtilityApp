@@ -1,5 +1,7 @@
 package au.edu.jcu.assessment.utilityapp.screen
 
+import android.R.attr.checked
+import android.R.attr.top
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
+import androidx.compose.foundation.layout.FlowRow
+import android.content.res.Configuration
+import androidx.compose.ui.platform.LocalConfiguration
 
 @Composable
 fun SettingsScreen(
@@ -39,9 +44,6 @@ fun SettingsScreen(
     val selectedNationality by userViewModel
         .selectedNationality
         .collectAsStateWithLifecycle()
-
-    // Controls whether the dropdown is open
-    var expanded by remember { mutableStateOf(false) }
 
     // Country names and their API codes
     val nationalities = listOf(
@@ -80,113 +82,205 @@ fun SettingsScreen(
         .darkModeEnabled
         .collectAsStateWithLifecycle()
 
+// Detect the device orientation to adapt the Settings layout.
+    val configuration = LocalConfiguration.current
+    val isLandscape =
+        configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+// Use three checkbox columns in landscape and two in portrait.
+    val checkboxColumns = if (isLandscape) 3 else 2
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            // Use less padding in portrait to give controls more room.
+            .padding(
+                horizontal = if (isLandscape) 24.dp else 16.dp,
+                vertical = if (isLandscape) 24.dp else 16.dp
+            ),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-    Text(
-            text = "Settings",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Text(
-            text = "Nationality",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Text(
-            text = "Choose the nationality of generated profiles.",
-            style = MaterialTheme.typography.bodyMedium
-        )
-
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            OutlinedTextField(
-                value = selectedLabel,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Select nationality") },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowDropDown,
-                        contentDescription = "Open nationality menu"
-                    )
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            // Make the whole field clickable
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .clickable { expanded = true }
-            )
-
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                nationalities.forEach { (country, code) ->
-                    DropdownMenuItem(
-                        text = { Text(country) },
-                        onClick = {
-                            userViewModel.updateNationality(code)
-                            expanded = false
-                        }
-                    )
-                }
-            }
-        }
-        Text(
-            text = "Visible profile fields",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Text(
-            text = "Choose which information to display.",
-            style = MaterialTheme.typography.bodyMedium
-        )
-
-        profileFields.forEach { (field, label) ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = field in visibleFields,
-                    onCheckedChange = { isChecked ->
-                        userViewModel.updateFieldVisibility(
-                            field,
-                            isChecked
-                        )
-                    }
-                )
-
-                Text(text = label)
-            }
-        }
-
-        Text(
-            text = "Appearance",
-            style = MaterialTheme.typography.titleMedium
-        )
-
+// Display Dark mode beside the title in landscape.
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Dark mode")
-
-            Switch(
-                checked = darkModeEnabled,
-                onCheckedChange = { enabled ->
-                    userViewModel.updateDarkMode(enabled)
-                }
+            Text(
+                text = "Settings",
+                style = MaterialTheme.typography.headlineMedium
             )
+
+            if (isLandscape) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Dark mode",
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
+
+                    Switch(
+                        checked = darkModeEnabled,
+                        onCheckedChange = { enabled ->
+                            userViewModel.updateDarkMode(enabled)
+                        }
+                    )
+                }
+            }
+        }
+
+// Arrange nationality settings horizontally in landscape.
+        if (isLandscape) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                Column() {
+                    Text(
+                        text = "Nationality",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+                // Reuse the nationality dropdown in landscape mode.
+                NationalityDropdown(
+                    selectedLabel = selectedLabel,
+                    nationalities = nationalities,
+                    onNationalitySelected = { code ->
+                        userViewModel.updateNationality(code)
+                    },
+                    modifier = Modifier.fillMaxWidth(0.50f)
+                )
+            }
+        }
+        else {
+            // Display nationality settings vertically in portrait mode.
+            Text(
+                text = "Nationality",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+
+            // Reuse the same dropdown component.
+            NationalityDropdown(
+                selectedLabel = selectedLabel,
+                nationalities = nationalities,
+                onNationalitySelected = { code ->
+                    userViewModel.updateNationality(code)
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+            Text(
+                text = "Visible profile fields",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(
+                    top = if (!isLandscape) 16.dp else 0.dp
+                )
+            )
+
+
+            //Field options in responsive two-column layout
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                maxItemsInEachRow = checkboxColumns
+            ) {
+                profileFields.forEach { (field, label) ->
+
+                    // Each option takes half of the available row width.
+                    Row(
+                        modifier = Modifier.fillMaxWidth(1f / checkboxColumns),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = field in visibleFields,
+                            onCheckedChange = { isChecked ->
+                                userViewModel.updateFieldVisibility(
+                                    field,
+                                    isChecked
+                                )
+                            }
+                        )
+
+                        Text(text = label)
+                    }
+                }
+            }
+        if (!isLandscape) {
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = "Dark mode",
+                    modifier = Modifier.padding(end = 16.dp
+                    )
+                )
+
+                Switch(
+                    checked = darkModeEnabled,
+                    onCheckedChange = { enabled ->
+                        userViewModel.updateDarkMode(enabled)
+                    }
+                )
+            }
+        }
+    }
+}
+@Composable
+private fun NationalityDropdown(
+    selectedLabel: String,
+    nationalities: List<Pair<String, String?>>,
+    onNationalitySelected: (String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // Controls whether the dropdown menu is open.
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        OutlinedTextField(
+            value = selectedLabel,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Select nationality") },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = "Open nationality menu"
+                )
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Make the entire field clickable.
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clickable { expanded = true }
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            nationalities.forEach { (country, code) ->
+                DropdownMenuItem(
+                    text = { Text(country) },
+                    onClick = {
+                        onNationalitySelected(code)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }
