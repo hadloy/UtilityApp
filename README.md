@@ -3,73 +3,71 @@
 ## Project Overview
 
 QA Test Data Generator is an Android utility application developed for CP5307 Mobile Computing Assessment 1 at James Cook University by Marion Andriolo.
-
-The application generates fictional user profiles using the Random User API, helping software testers obtain sample data for testing registration forms, user accounts and other applications.
+The application generates fictional user profiles using the Random User API, to help software testers obtain sample data for testing registration forms, user accounts and other applications.
 
 ## Features
 
-- Generate fictional user profiles containing gender, names, emails, phone numbers, addresses, dates of birth, usernames, passwords, nationalities, and profile pictures.
+- Generate fictional profiles containing names, emails, phone numbers, addresses, dates of birth, usernames, passwords, nationalities and profile pictures.
 - Select a specific nationality or generate a random nationality.
 - Choose which profile fields are visible.
 - Switch between light and dark mode.
-- Navigate between Utility and Settings screens.
-- Scroll through profile information on different screen sizes.
+- Navigate between Generator and Settings screens.
+- Adapt the interface to portrait and landscape orientations.
 
-## Technologies
-
-- Kotlin
-- Android Studio
-- Jetpack Compose
-- Material Design 3
-- ViewModel and StateFlow
-- Retrofit and Gson
-- Kotlin Coroutines
-- Coil for image loading
-- Git and GitHub
-
-## Application Architecture
-
-The application follows a layered structure:
-
-`Compose UI → ViewModel → Repository → Retrofit → Random User API`
-
-- Compose UI: Displays profiles and settings.
-- ViewModel: Manages user profiles, nationality selection, visible fields and theme preferences.
-- Repository: Separates API data access from UI state management.
-- Retrofit: Fetches JSON data from the Random User API.
-- Data models: Represent API responses and user profiles.
-
-## How to Run
+## Getting Started
 
 1. Clone or download this GitHub repository.
 2. Open the project in Android Studio.
 3. Allow Gradle to synchronise.
 4. Run the application on an Android emulator or compatible device.
 5. Open Settings to customise the generated profiles.
-6. Return to Utility and press Generate User.
+6. Return to Generator and press Generate User.
 
 An internet connection is required to fetch new profiles.
 
-## API
+## Project Structure
 
-This project uses the Random User API:
+The application follows a layered architecture:
 
-https://randomuser.me/
+`Compose UI → ViewModel → Repository → Retrofit → Random User API`
 
-The nationality setting is passed through the optional `nat` query parameter.
+- Compose UI: Displays profiles and settings.
+- ViewModel: Manages generated profiles, nationality selection, visible fields and theme preferences.
+- Repository: Separates API data access from UI state management.
+- Retrofit: Fetches JSON data from the Random User API.
 
-## Testing
+## Main Composables
 
-The application successfully passed nine manual functional tests covering API profile generation, nationality filtering, field visibility, light and dark mode, navigation, scrolling and screen rotation. Both screens were checked for usability and layout issues.
+- `UtilityScreen`: Displays generated user profiles and the Generate User button.
+- `LandscapeProfileLayout`: Adapts profile information to landscape orientation.
+- `ProfileField`: Displays profile information using reusable cards and icons.
+- `SettingsScreen`: Manages nationality, visible fields and dark mode.
+- `NationalityDropdown`: Provides a reusable nationality selector.
 
-## Limitations
+## Key Concepts Covered
 
-- The application generates one profile at a time.
-- Settings are not permanently saved after the application process ends.
-- Network failures are logged rather than displayed through a dedicated error message.
+- Kotlin and Jetpack Compose
+- Material Design 3 components and layouts
+- ViewModel, StateFlow and Coroutines
+- Retrofit and Gson for API integration
+- Coil for profile image loading
+- Responsive layouts and navigation
+- State management and reusable composables
+- Git and GitHub version control
 
-## Development
+## Testing and Limitations
 
-The GitHub commit history documents the project's development, including UI implementation, API integration, settings and architecture improvements.
+The application was manually tested for profile generation, nationality filtering, field visibility, theme switching, navigation and screen rotation.
+Current limitations include generating one profile at a time, settings not being permanently saved, and limited user-facing network error handling.
 
-This project was developed for educational purposes.
+## Suggested Extensions
+
+- Generate multiple profiles at once.
+- Export test data as CSV or JSON.
+- Copy generated information to the clipboard.
+- Save user preferences using DataStore.
+- Improve network error handling.
+
+## License
+
+This project was developed for educational purposes as part of CP5307 Mobile Computing at James Cook University. 

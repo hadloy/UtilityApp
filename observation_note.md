@@ -117,3 +117,6 @@ After implementing the changes, I had a remaining empty area at the bottom of la
 In Jetpack Compose, even if the content of a component is hidden, the space occupied by the parent can remain.
 Modifier.weight() distributes available space between elements, and fillMaxHeight(), fillMaxSize() control how much space components occupy.
 Understanding the hierarchy of composables is essential. 
+
+---
+Today I improved the responsive layouts of my Generator and Settings screens.
