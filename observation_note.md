@@ -99,3 +99,21 @@ I customised navigation using NavigationBarItemDefaults.colors() and MaterialThe
 I improved the app structure by removing the unused quote app model and unused template specificities (such as some colours).
 I reviewed the code, removed unused imports, and verified indentation/spacing using 'ctrl-opt-o' and 'ctrl-opt-l'
 I changed the "Home" icon to a group icon and named it "Generator"; I added a new import in Gradle to access the specific Material Icons library needed.
+
+---
+## 15 October 2026
+
+Based on in-class feedback, I improved UI of the main screen using a layout where data is displayed in a column with two rows and centred to avoid unused space. I also modify font size and title style and added icons to make it more attractive.
+I also improved the application's landscape layout using Jetpack Compose.
+Orientation detection was implemented using LocalConfiguration and Configuration.ORIENTATION_LANDSCAPE.
+I created a separate landscape layout that maintains the current portrait design.
+The layout proportion where adjusted to give extra space to longer data (email, address).
+I implemented a NavigationRail in landscape and kept the original NavigationBar in portrait to avoid scrolling.
+
+### Challenges
+After implementing the changes, I had a remaining empty area at the bottom of landscape mode, which I thought was due to the profile card in the main layout. After trying multiple things, I realised it was due to the NavigationBarItem, so I moved the 'if (!isLandscape)' condition outside  the 'NavigationBar'.
+
+### Things I learned
+In Jetpack Compose, even if the content of a component is hidden, the space occupied by the parent can remain.
+Modifier.weight() distributes available space between elements, and fillMaxHeight(), fillMaxSize() control how much space components occupy.
+Understanding the hierarchy of composables is essential. 

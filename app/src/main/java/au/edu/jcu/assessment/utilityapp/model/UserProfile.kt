@@ -2,7 +2,6 @@ package au.edu.jcu.assessment.utilityapp.model
 
 data class UserProfile(
     val name: String,
-    val gender: String,
     val email: String,
     val phone: String,
     val nationality: String,

@@ -25,16 +25,15 @@ class UserProfileViewModel : ViewModel() {
     // A sample user is displayed before the first API request.
     private val _user = MutableStateFlow(
         UserProfile(
-            gender = "female",
             name = "Sophie Taylor",
             email = "sophie.taylor@example.com",
             phone = "0400 000 000",
             nationality = "AU",
-            pictureUrl = "https://randomuser.me/api/portraits/women/75.jpg",
             address = "25 King Street, Brisbane, Australia",
             birthday = "1995-04-12",
             username = "sophietaylor",
-            password = "Example123!"
+            password = "Example123!",
+            pictureUrl = "https://randomuser.me/api/portraits/women/75.jpg"
         )
     )
     //read only version of MutableStateFlow
@@ -55,11 +54,10 @@ class UserProfileViewModel : ViewModel() {
                 //convert API response
                 _user.value = UserProfile(
                     name = "${apiUser.name.first} ${apiUser.name.last}",
-                    gender = apiUser.gender,
                     email = apiUser.email,
                     phone = apiUser.phone,
                     nationality = apiUser.nat,
-                    address = "${apiUser.location.street.number} ${apiUser.location.street.name}, ${apiUser.location.city}, ${apiUser.location.country}",
+                    address = "${apiUser.location.street.number} ${apiUser.location.street.name}, ${apiUser.location.city}, ${apiUser.location.state}, ${apiUser.location.postcode}, ${apiUser.location.country}",
                     birthday = apiUser.dob.date.substringBefore("T"),
                     username = apiUser.login.username,
                     password = apiUser.login.password,

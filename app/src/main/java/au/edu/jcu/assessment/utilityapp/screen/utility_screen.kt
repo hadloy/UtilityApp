@@ -57,7 +57,6 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Public
-import androidx.compose.material.icons.filled.Wc
 
 // Displays an icon in a Compose layout.
 import androidx.compose.material3.Icon
@@ -81,9 +80,6 @@ fun UtilityScreen(
 
     // Create a list containing only the fields enabled in Settings.
     val profileFields = buildList {
-        if ("gender" in visibleFields) {
-            add("Gender" to sampleUser.gender)
-        }
         if ("nationality" in visibleFields) {
             add("Nationality" to sampleUser.nationality)
         }
@@ -192,10 +188,51 @@ fun UtilityScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
+                        // Address full-width and group other visible fields to fill incomplete row.
+                        val compactFields = profileFields.filter { it.first != "Address" }
+                        // Separate the fields into those before and after Address.
+                        val addressIndex = profileFields.indexOfFirst { it.first == "Address" }
 
-                        // Split the fields into groups of two.
-                        // If a field is hidden, the remaining fields readjust
-                        profileFields.chunked(2).forEach { fieldPair ->
+                        // Keep Address approximately in the middle of the visible fields.
+                        val fieldsBeforeAddress = compactFields.take(
+                            if (addressIndex >= 0) addressIndex else compactFields.size
+                        )
+
+                        val fieldsAfterAddress = compactFields.drop(fieldsBeforeAddress.size)
+                        // Split fields into groups of two, but give Address its own full-width row.
+                        val portraitRows = buildList<List<Pair<String, String>>> {
+
+                            // Round up to an even number of fields before Address.
+                            val fieldsToPlaceBeforeAddress =
+                                if (addressIndex >= 0) {
+                                    (addressIndex + 1) / 2 * 2
+                                } else {
+                                    compactFields.size
+                                }
+
+                            // Create pairs of fields before Address.
+                            compactFields
+                                .take(fieldsToPlaceBeforeAddress)
+                                .chunked(2)
+                                .forEach { fieldPair ->
+                                    add(fieldPair)
+                                }
+
+                            // Display Address on its own full-width row, if enabled.
+                            profileFields.find { it.first == "Address" }?.let { addressField ->
+                                add(listOf(addressField))
+                            }
+
+                            // Display the remaining fields after Address.
+                            compactFields
+                                .drop(fieldsToPlaceBeforeAddress)
+                                .chunked(2)
+                                .forEach { fieldPair ->
+                                    add(fieldPair)
+                                }
+                        }
+
+                        portraitRows.forEach { fieldPair ->
 
                             // Display up to two cards horizontally.
                             Row(
@@ -208,7 +245,6 @@ fun UtilityScreen(
                                 fieldPair.forEach { (label, value) ->
                                     // Choose the icon for each field
                                     val fieldIcon = when (label) {
-                                        "Gender" -> Icons.Filled.Wc
                                         "Nationality" -> Icons.Filled.Public
                                         "Email" -> Icons.Filled.Email
                                         "Phone" -> Icons.Filled.Phone
@@ -224,12 +260,12 @@ fun UtilityScreen(
                                         value = value,
                                         icon = fieldIcon,
                                         modifier = Modifier
-                                            .weight(1f)
+                                            .weight(if (label == "Address") 2f else 1f)
                                             .fillMaxHeight()
                                     )
                                 }
-                                //filled the last row if only one field
-                                if (fieldPair.size == 1) {
+                                // Fill an incomplete row, except when Address uses the full width.
+                                if (fieldPair.size == 1 && fieldPair.first().first != "Address") {
                                     Spacer(
                                         modifier = Modifier.weight(1f)
                                     )
@@ -375,7 +411,6 @@ fun LandscapeProfileLayout(
                     // Display each field in the current row.
                     fieldPair.forEach { (label, value) ->
                         val fieldIcon = when (label) {
-                            "Gender" -> Icons.Filled.Wc
                             "Nationality" -> Icons.Filled.Public
                             "Email" -> Icons.Filled.Email
                             "Phone" -> Icons.Filled.Phone

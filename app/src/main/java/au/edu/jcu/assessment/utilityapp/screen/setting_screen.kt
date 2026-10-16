@@ -68,7 +68,6 @@ fun SettingsScreen(
     val profileFields = listOf(
         "picture" to "Profile picture",
         "name" to "Name",
-        "gender" to "Gender",
         "email" to "Email",
         "phone" to "Phone",
         "nationality" to "Nationality",
