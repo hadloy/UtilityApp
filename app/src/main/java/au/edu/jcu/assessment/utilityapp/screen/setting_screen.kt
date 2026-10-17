@@ -1,19 +1,22 @@
 package au.edu.jcu.assessment.utilityapp.screen
 
-import android.R.attr.checked
-import android.R.attr.top
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -29,12 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
-import androidx.compose.foundation.layout.FlowRow
-import android.content.res.Configuration
-import androidx.compose.ui.platform.LocalConfiguration
 
 @Composable
 fun SettingsScreen(
@@ -81,6 +82,12 @@ fun SettingsScreen(
     val darkModeEnabled by userViewModel
         .darkModeEnabled
         .collectAsStateWithLifecycle()
+    // Choose a readable text colour for the selected theme.
+    val settingsTextColor = if (darkModeEnabled) {
+        androidx.compose.ui.graphics.Color.White
+    } else {
+        androidx.compose.ui.graphics.Color.Black
+    }
 
 // Detect the device orientation to adapt the Settings layout.
     val configuration = LocalConfiguration.current
@@ -89,153 +96,181 @@ fun SettingsScreen(
 
 // Use three checkbox columns in landscape and two in portrait.
     val checkboxColumns = if (isLandscape) 3 else 2
-
+// Allow the Settings screen to scroll on smaller devices.
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            // Use less padding in portrait to give controls more room.
-            .padding(
-                horizontal = if (isLandscape) 24.dp else 16.dp,
-                vertical = if (isLandscape) 24.dp else 16.dp
-            ),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+            .padding(12.dp),
+        verticalArrangement = Arrangement.Center
     ) {
-// Display Dark mode beside the title in landscape.
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Settings",
-                style = MaterialTheme.typography.headlineMedium
-            )
 
-            if (isLandscape) {
+        // A translucent surface keeps settings readable
+        // while allowing some of the background to show through.
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(
+                    alpha = 0.94f
+                )
+            )
+        ) {
+
+            // Keep all existing Settings components inside this Column.
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = if (isLandscape) 12.dp else 16.dp,
+                    vertical = if (isLandscape) 12.dp else 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Display Dark mode beside the title in landscape.
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Dark mode",
-                        modifier = Modifier.padding(end = 16.dp)
+                        text = "Settings",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = settingsTextColor
                     )
 
-                    Switch(
-                        checked = darkModeEnabled,
-                        onCheckedChange = { enabled ->
-                            userViewModel.updateDarkMode(enabled)
+                    if (isLandscape) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Dark mode",
+                                modifier = Modifier.padding(end = 16.dp),
+                                color = settingsTextColor
+                            )
+
+                            Switch(
+                                checked = darkModeEnabled,
+                                onCheckedChange = { enabled ->
+                                    userViewModel.updateDarkMode(enabled)
+                                }
+                            )
                         }
-                    )
+                    }
                 }
-            }
-        }
 
-// Arrange nationality settings horizontally in landscape.
-        if (isLandscape) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                Column() {
+                // Arrange nationality settings horizontally in landscape.
+                if (isLandscape) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        Column {
+                            Text(
+                                text = "Nationality",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = settingsTextColor
+                            )
+                        }
+
+                        // Reuse the nationality dropdown in landscape mode.
+                        NationalityDropdown(
+                            selectedLabel = selectedLabel,
+                            nationalities = nationalities,
+                            onNationalitySelected = { code ->
+                                userViewModel.updateNationality(code)
+                            },
+                            modifier = Modifier.fillMaxWidth(0.50f)
+                        )
+                    }
+                } else {
+                    // Display nationality settings vertically in portrait mode.
                     Text(
                         text = "Nationality",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 16.dp),
+                        color = settingsTextColor
+                    )
+
+                    // Reuse the same dropdown component.
+                    NationalityDropdown(
+                        selectedLabel = selectedLabel,
+                        nationalities = nationalities,
+                        onNationalitySelected = { code ->
+                            userViewModel.updateNationality(code)
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
-
-                // Reuse the nationality dropdown in landscape mode.
-                NationalityDropdown(
-                    selectedLabel = selectedLabel,
-                    nationalities = nationalities,
-                    onNationalitySelected = { code ->
-                        userViewModel.updateNationality(code)
-                    },
-                    modifier = Modifier.fillMaxWidth(0.50f)
+                Text(
+                    text = "Visible profile fields",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(
+                        top = if (!isLandscape) 16.dp else 0.dp
+                    ),
+                    color = settingsTextColor
                 )
-            }
-        }
-        else {
-            // Display nationality settings vertically in portrait mode.
-            Text(
-                text = "Nationality",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 16.dp)
-            )
 
-            // Reuse the same dropdown component.
-            NationalityDropdown(
-                selectedLabel = selectedLabel,
-                nationalities = nationalities,
-                onNationalitySelected = { code ->
-                    userViewModel.updateNationality(code)
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-            Text(
-                text = "Visible profile fields",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(
-                    top = if (!isLandscape) 16.dp else 0.dp
-                )
-            )
-
-
-            //Field options in responsive two-column layout
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                maxItemsInEachRow = checkboxColumns
-            ) {
-                profileFields.forEach { (field, label) ->
-
-                    // Each option takes half of the available row width.
+                //Field options in responsive two-column layout
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    maxItemsInEachRow = checkboxColumns
+                ) {
+                    profileFields.forEach { (field, label) ->
+                        // Each option takes half of the available row width.
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = field in visibleFields,
+                                onCheckedChange = { isChecked ->
+                                    userViewModel.updateFieldVisibility(
+                                        field,
+                                        isChecked
+                                    )
+                                }
+                            )
+                            Text(
+                                text = label,
+                                color = settingsTextColor
+                            )
+                        }
+                    }
+                }
+                //Appearance setting below checkbox in portrait, modify dark mode switch placement in landscape
+                if (!isLandscape) {
+                    Text(
+                        text = "Appearance",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 16.dp),
+                        color = settingsTextColor
+                    )
+                    // Arrange the Dark mode label and switch horizontally.
                     Row(
-                        modifier = Modifier.fillMaxWidth(1f / checkboxColumns),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Checkbox(
-                            checked = field in visibleFields,
-                            onCheckedChange = { isChecked ->
-                                userViewModel.updateFieldVisibility(
-                                    field,
-                                    isChecked
-                                )
+                        Text(
+                            text = "Dark mode",
+                            modifier = Modifier.padding(
+                                end = 16.dp
+                            ),
+                            color = settingsTextColor
+                        )
+                        // Update the theme setting in the ViewModel when toggled.
+                        Switch(
+                            checked = darkModeEnabled,
+                            onCheckedChange = { enabled ->
+                                userViewModel.updateDarkMode(enabled)
                             }
                         )
-
-                        Text(text = label)
                     }
                 }
-            }
-        if (!isLandscape) {
-            Text(
-                text = "Appearance",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = "Dark mode",
-                    modifier = Modifier.padding(end = 16.dp
-                    )
-                )
-
-                Switch(
-                    checked = darkModeEnabled,
-                    onCheckedChange = { enabled ->
-                        userViewModel.updateDarkMode(enabled)
-                    }
-                )
             }
         }
     }
 }
+
 @Composable
 private fun NationalityDropdown(
     selectedLabel: String,

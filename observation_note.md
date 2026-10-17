@@ -119,4 +119,13 @@ Modifier.weight() distributes available space between elements, and fillMaxHeigh
 Understanding the hierarchy of composables is essential. 
 
 ---
-Today I improved the responsive layouts of my Generator and Settings screens.
+### 16 October 2026
+
+Today I improved the responsive layouts of the Generator and Settings screens. I adjusted the navigation for portrait and landscape modes, organised profile fields into two columns with a full-width Address field, and improved the Settings checkbox layout.
+My main challenge was understanding how Kotlin functions such as `indexOfFirst()`, `take()`, `drop()` and `chunked()` work together. I also learned how reusable composables help avoid duplicated code.
+
+---
+### 17 October 2026
+
+Today I added different backgrounds for light and dark modes and improved the design of the Generator and Settings screens.
+I had some difficulties with text readability and layout positioning, especially in landscape mode. I learned how to use cards, colours and Compose modifiers to improve the interface without changing its functionality.

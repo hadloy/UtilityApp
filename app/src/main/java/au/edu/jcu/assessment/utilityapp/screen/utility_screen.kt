@@ -1,72 +1,53 @@
 package au.edu.jcu.assessment.utilityapp.screen
 
-// Jetpack Compose UI components.
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-
-// Material 3 components.
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-
-// Compose state and layout utilities.
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-// ViewModel and lifecycle imports.
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-// Project-specific imports.
 import au.edu.jcu.assessment.utilityapp.R
 import au.edu.jcu.assessment.utilityapp.viewmodel.UserProfileViewModel
-
-// Library used to load profile pictures from URLs.
 import coil.compose.AsyncImage
-
-// Material icons used in the profile fields.
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Public
-
-// Displays an icon in a Compose layout.
-import androidx.compose.material3.Icon
-import androidx.compose.ui.graphics.vector.ImageVector
-
-// Provides information about the device configuration.
-import androidx.compose.ui.platform.LocalConfiguration
-
-// Contains constants for portrait and landscape orientations.
-import android.content.res.Configuration
 
 @Composable
 fun UtilityScreen(
@@ -77,7 +58,15 @@ fun UtilityScreen(
     val configuration = LocalConfiguration.current //read device configuration and update when rotation
     val isLandscape =
         configuration.orientation == Configuration.ORIENTATION_LANDSCAPE // verify if in landscape
-
+    val darkModeEnabled by userViewModel
+        .darkModeEnabled
+        .collectAsStateWithLifecycle()
+    // Choose a readable text colour for the selected theme.
+    if (darkModeEnabled) {
+        androidx.compose.ui.graphics.Color.White
+    } else {
+        androidx.compose.ui.graphics.Color.Black
+    }
     // Create a list containing only the fields enabled in Settings.
     val profileFields = buildList {
         if ("nationality" in visibleFields) {
@@ -122,27 +111,8 @@ fun UtilityScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
 
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.Center
         ) {
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.qa_app_icon),
-                    contentDescription = "QA Test Data Generator app icon",
-                    modifier = Modifier.size(48.dp)
-                )
-                Text(
-                    text = "QA Test Data Generator",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
-            Text(
-                text = "Generate fictional user data for software testing.",
-                style = MaterialTheme.typography.bodyMedium
-            )
 
             // Main Card containing the generated user profile.
             Card(
@@ -161,24 +131,50 @@ fun UtilityScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    // Display the profile picture
-                    if ("picture" in visibleFields) {
-                        AsyncImage(
-                            model = sampleUser.pictureUrl,
-                            contentDescription = "User profile picture",
-                            modifier = Modifier
-                                .size(100.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop //circular shape
-                        )
-                    }
-
                     // Column containing all visible profile fields.
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        // Display the app icon and title inside the profile card.
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.qa_app_icon),
+                                contentDescription = "QA Test Data Generator app icon",
+                                modifier = Modifier.size(40.dp)
+                            )
 
+                            Text(
+                                text = "QA Test Data Generator",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+
+                        // Explain the purpose of the application.
+                        Text(
+                            text = "Generate fictional user data for software testing.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(bottom =10.dp)
+                        )
+                        // Display the profile picture
+                        if ("picture" in visibleFields) {
+                            AsyncImage(
+                                model = sampleUser.pictureUrl,
+                                contentDescription = "User profile picture",
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .align(Alignment.CenterHorizontally)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop //circular shape
+                            )
+                        }
                         // Display Name on one row full width
                         if ("name" in visibleFields) {
                             ProfileField(
@@ -193,14 +189,9 @@ fun UtilityScreen(
                         // Separate the fields into those before and after Address.
                         val addressIndex = profileFields.indexOfFirst { it.first == "Address" }
 
-                        // Keep Address approximately in the middle of the visible fields.
-                        val fieldsBeforeAddress = compactFields.take(
-                            if (addressIndex >= 0) addressIndex else compactFields.size
-                        )
 
-                        val fieldsAfterAddress = compactFields.drop(fieldsBeforeAddress.size)
                         // Split fields into groups of two, but give Address its own full-width row.
-                        val portraitRows = buildList<List<Pair<String, String>>> {
+                        val portraitRows = buildList {
 
                             // Round up to an even number of fields before Address.
                             val fieldsToPlaceBeforeAddress =

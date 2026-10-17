@@ -42,6 +42,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.NavigationRailItem
 
+//Background images
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +74,18 @@ fun UtilityApp(
     val configuration = LocalConfiguration.current // Read device configuration.
     val isLandscape = //check if is in landscape
         configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    // Observe the existing dark mode setting.
+    val darkModeEnabled by userViewModel.darkModeEnabled
+        .collectAsStateWithLifecycle()
+
+    // Choose the background image based on the theme.
+    val backgroundRes = if (darkModeEnabled) {
+        R.drawable.dark_mode_background
+    } else {
+        R.drawable.light_mode_background
+    }
     Scaffold(
+        containerColor = androidx.compose.ui.graphics.Color.Transparent,
         bottomBar = {
             if (!isLandscape) {
                 NavigationBar {
@@ -132,10 +148,20 @@ fun UtilityApp(
                     )
                 }
             }
-            Box(modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
             ) {
+                // Background image fills the available screen area.
+                Image(
+                    painter = painterResource(id = backgroundRes),
+                    contentDescription = null, // Decorative image.
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                // Existing screen content appears above the background.
                 when (selectedTab) {
                     "Utility" -> UtilityScreen(userViewModel = userViewModel)
                     "Settings" -> SettingsScreen(userViewModel = userViewModel)
